@@ -1,0 +1,19 @@
+.text-block{
+  width: 39.4px;
+  height: 58px;
+  margin-top: 6px;
+  margin-left: 3px;
+  margin-right: 3px;
+  border-radius: 8px;
+  background-color: #444;
+  align-items: center;
+  justify-content: center;
+}
+
+.key-line{
+  width: 454px;
+  height: 64px;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+}
