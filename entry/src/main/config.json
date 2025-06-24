@@ -7,8 +7,7 @@
       "name": "1.0.0"
     }
   },
-  "deviceConfig": {
-  },
+  "deviceConfig": {},
   "module": {
     "deviceType": [
       "liteWearable"
@@ -18,18 +17,30 @@
       "moduleName": "entry",
       "moduleType": "entry"
     },
+    "distroFilter": {
+      "screenShape": {
+        "policy": "include",
+        "value": ["circle"]
+      },
+      "screenWindow": {
+        "policy": "include",
+        "value": ["454*454"]
+      }
+    },
     "abilities": [
       {
         "name": "default",
         "icon": "$media:icon",
-        "label": "$string:entry_MainAbility",
+        "label": "$string:zhshi_wordle",
         "type": "page"
       }
     ],
     "js": [
       {
         "pages": [
-          "pages/index/index"
+          "pages/index/index",
+          "pages/init_words/init_words",
+          "pages/main/main"
         ],
         "name": "default"
       }

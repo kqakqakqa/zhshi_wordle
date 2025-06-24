@@ -1,0 +1,29 @@
+<stack style="width: 454px; height: 454px; background-color: #111;">
+  <list style="width: 454px; height: 454px; background-color: transparent;">
+    <list-item style="width: 454px; height: {{ (130.5) + (trials.length * 64) + (80) + (16) + (250) + 'px' }}; flex-direction: column;">
+      <div style="height: 130.5px; background-color: transparent;"></div>
+      <div if="{{ refresh }}" style="width: 387.5px; height: {{trials.length * 64 + 'px'}}; padding-left: 66.5px; flex-direction: row; flex-wrap: wrap; background-color: transparent; justify-content: center;">
+        <div for="{{ flat1(this.trials) }}" class="trial-char" style="background-color: {{ getHintBgColor($item.hint) }}; border-color: {{ getHintColor($item.hint) }};">
+          <text>{{ $item.char }}</text>
+        </div>
+      </div>
+      <div style="width: 387.5px; height: 80px; padding-top: 16px; padding-left: 66.5px; background-color: transparent; justify-content: center;">
+        <div if="{{ trials[trials.length - 1][4].char !== '' || true}}" on:click="onEnterPress" style="width: {{ (animationInterval !== null || finished) ? '252px' : '124px' }}; margin-left: {{ (1+animationFactor)*16 + 'px' }}; margin-right: {{ (1-animationFactor)*16 + 'px' }}; height: 58px; margin-top: 3px; border-radius: 64px; background-color: #444; align-items: center; justify-content: center;">
+          <text>{{ (animationInterval !== null || finished) ? message : "→" }}</text>
+        </div>
+      </div>
+      <div style="height: 16px; background-color: transparent;"></div>
+      <div style="width: 454px; height: 250px; background-color: #cc333333; flex-wrap: wrap; justify-content: center;">
+        <div on:click="{{onKeyPress($item)}}" class="keyboard-key" style="background-color: {{ getKeyboardHintColor($item) }};" for="{{keys[0]}}"><text>{{ $item }}</text></div>
+        <div style="width: 454px; height: 0px; background-color: transparent;"></div>
+        <div on:click="{{onKeyPress($item)}}" class="keyboard-key" style="background-color: {{ getKeyboardHintColor($item) }};" for="{{keys[1]}}"><text>{{ $item }}</text></div>
+        <div style="width: 454px; height: 0px; background-color: transparent;"></div>
+        <div on:click="{{onKeyPress($item)}}" class="keyboard-key" style="background-color: {{ getKeyboardHintColor($item) }};" for="{{keys[2]}}"><text>{{ $item }}</text></div>
+        <div style="width: 454px; height: 0px; background-color: transparent;"></div>
+        <div on:click="onDelPress" style="width: 84.4px; height: 45.4px; border-radius: 8px; margin-top: 6px; background-color: #444; align-items: center; justify-content: center;">
+          <text style="font-size: 26px;">Del</text>
+        </div>
+      </div>
+    </list-item>
+  </list>
+</stack>
