@@ -1,0 +1,14 @@
+<stack style="width: 454px; height: 454px;">
+  <list style="width: 454px; height: 454px;">
+    <list-item style="height: {{ trials.length<4 ? '130.5px' : '66.5px' }};"></list-item>
+    <list-item style="width: 387px; height: {{trials.length * 64 + 'px'}}; flex-direction: row; flex-wrap: wrap; justify-content: center; padding-left: 67px;">
+      <text for="{{ flat1(this.trials) }}" class="trial-char" style="background-color: {{ getHintBgColor($item.hint) }}; border-color: {{ getHintColor($item.hint) }};">{{ $item.char === "" ? " " : $item.char }}</text>
+    </list-item>
+    <list-item if="{{ trials[trials.length - 1][4].char !== '' }}" style="width: 454px; height: 74px; justify-content: center;">
+      <text on:click="onEnterPress" style="width: {{ (animationInterval !== null || finished) ? '252px' : '124px' }}; margin-left: {{ (1+animationFactor)*16 + 'px' }}; margin-right: {{ (1-animationFactor)*16 + 'px' }}; height: 58px; margin-top: 16px; border-radius: 58px; background-color: #444; text-align: center; padding-top: 10px;">{{ (animationInterval !== null || finished) ? message : "→" }}</text>
+    </list-item>
+    <list-item style="width: 454px; height: 86px; justify-content: center;">
+      <text on:click="onShowKeyboardPress" style="width: 124px; height: 58px; margin-top: 12px; border-radius: 58px; background-color: #444; text-align: center; padding-top: 10px;">键盘</text>
+    </list-item>
+  </list>
+</stack>

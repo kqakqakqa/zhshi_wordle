@@ -1,4 +1,5 @@
 import file from '@system.file';
+import router from '@system.router';
 
 export default {
   data: {
@@ -8,124 +9,47 @@ export default {
       ['A','S','D','F','G','H','J','K','L'],
       ['Z','X','C','V','B','N','M']
     ],
-    answer: [],
+    answer: undefined,
     keyboardHint: {},
     animationDuration: 0,
     animationInterval: null,
     animationFactor: 0,
     message: "",
     finished: false,
-    refresh: true,
+    // showKeyboard: false,
+    isEnterPress: undefined,
   },
   onInit() {
-    // if()
-    this.setAnswer();
+    if(this.isEnterPress) this.onEnterPress();
   },
-  onKeyPress(v){
-    if(this.finished) return;
-    const trialCount = this.trials.length - 1;
-    this.trials[trialCount] = this.trials[trialCount]
-      .filter(function(v){return v.char !== "";})
-      .concat([{char:v.toString()},{char:""},{char:""},{char:""},{char:""}])
-      .slice(0,5);
-    this.refreshTrials();
-  },
-  onDelPress(){
-    if(this.finished) return;
-    const trialCount = this.trials.length - 1;
-    this.trials[trialCount] = this.trials[trialCount]
-      .filter(function(v){return v.char !== "";})
-      .slice(0,-1)
-      .concat([{char:""},{char:""},{char:""},{char:""},{char:""}])
-      .slice(0,5);
-    this.refreshTrials();
-  },
-  // setAnswer(){
-  //   let i = 0;
-  //   let wordIndex = 0;
-  //   const targetIndex = Math.floor(1919 * this.getDailyRnd());
-  //   // const targetIndex = Math.floor(1918 * Math.random());
-  //
-  //   while (i < this.wordsStr.length) {
-  //     while (i < this.wordsStr.length && this.wordsStr[i] === ' ') i++;
-  //     if (i >= this.wordsStr.length) break;
-  //
-  //     const prefix = this.wordsStr[i] + this.wordsStr[i + 1];
-  //     i += 2;
-  //
-  //     while (i + 2 < this.wordsStr.length && this.wordsStr[i] !== ' ') {
-  //       if (wordIndex === targetIndex) {
-  //         this.answer = (prefix + this.wordsStr[i] + this.wordsStr[i + 1] + this.wordsStr[i + 2]).split("");
-  //         return;
-  //       }
-  //       wordIndex++;
-  //       i += 3;
-  //     }
-  //   }
-  // },
-  setAnswer(){
-    let targetIndex = Math.floor(1919 * this.getDailyRnd());
-    let i = 0;
-    file.readText({
-      uri: `internal://app/words/dict`,
-      success: data => {
-        const dict = JSON.parse(data.text);
-        for (const key in dict) {
-          const freq = dict[key];
-          if (targetIndex < freq) {
-            file.readText({
-              uri: `internal://app/words/${key}`,
-              position: targetIndex * 3,
-              length: 3,
-              success: data => {
-                this.answer = (key + data.text).split("");
-              }
-            });
-            return;
-          }
-          targetIndex -= freq;
-        }
-      },
+  onShowKeyboardPress(){
+    // this.showKeyboard = !this.showKeyboard;
+    router.replace({
+      uri: "/pages/goto/goto",
+      params:{
+        goto: "/pages/keyboard/keyboard",
+        trials: this.trials,
+        answer: this.answer,
+        keyboardHint: this.keyboardHint,
+        message: this.message,
+        finished: this.finished,
+      }
     });
-
   },
-  // isValid(trial){
-  //   if(trial[4] === "") return false;
-  //
-  //   let i = 0;
-  //
-  //   while (i < this.wordsStr.length) {
-  //     while (i < this.wordsStr.length && this.wordsStr[i] === ' ') i++;
-  //     if (i >= this.wordsStr.length) break;
-  //
-  //     var prefix = this.wordsStr[i] + this.wordsStr[i + 1];
-  //     i += 2;
-  //
-  //     if (prefix !== trial[0].char + trial[1].char) {
-  //       while (i < this.wordsStr.length && this.wordsStr[i] !== ' ') i++;
-  //       continue;
-  //     }
-  //
-  //     while (i + 2 < this.wordsStr.length && this.wordsStr[i] !== ' ') {
-  //       var word = prefix + this.wordsStr[i] + this.wordsStr[i + 1] + this.wordsStr[i + 2];
-  //       if (word === trial[0].char + trial[1].char + trial[2].char + trial[3].char +trial[4].char) {
-  //         return true;
-  //       }
-  //       i += 3;
-  //     }
-  //   }
-  //
-  //   return false;
-  // },
   checkValid(trial, callbackfn){
     if(trial[4].char === "") callbackfn(false);
 
     file.readText({
       uri: `internal://app/words/${trial[0].char + trial[1].char}`,
       success: data => {
-        callbackfn(data.text.indexOf(trial[2].char + trial[3].char + trial[4].char) !== -1);
+        var i = 0;
+        while (i <= data.text.length - 3) {
+          if (data.text.substring(i, i + 3) === trial[2].char + trial[3].char + trial[4].char) return callbackfn(true);
+          i += 3;
+        }
+        return callbackfn(false);
       },
-      fail: data => {
+      fail: () => {
         callbackfn(false);
       }
     });
@@ -141,30 +65,28 @@ export default {
       if(!isValid) {
         this.message = "Invalid word"
         this.setAnimation();
-        this.refreshTrials();
         return;
       }
       this.trials[trialCount] = this.getHint(trial,this.answer);
       this.keyboardHint = this.getKeyboardHint(this.trials);
       if(this.isCorrect(trial)){
         this.message = "Splendid!";
-        this.setAnimation();
         this.finished = true;
         this.refreshTrials();
+        this.setAnimation();
         return;
       }
       if(trialCount>4){
         this.finished = true;
         this.message = this.answer.join("");
-        this.refreshTrials();
         return;
       }
       this.trials.push([{char:""},{char:""},{char:""},{char:""},{char:""}]);
     });
   },
   refreshTrials(){
-    this.refresh = false;
-    this.refresh = true;
+    const trials = this.trials;
+    this.trials = trials;
   },
   flat1(arr) {
     var result = [];
@@ -179,17 +101,6 @@ export default {
       }
     }
     return result;
-  },
-  getDailyRnd(time = Date.now()) {
-    const date = new Date(time + 8 * 60 * 60 * 1000);
-    const year = date.getUTCFullYear();
-    const month = date.getUTCMonth() + 1;
-    const day = date.getUTCDate();
-    const seed =year * 10000 + month * 100 + day;
-    const a = 9301;
-    const c = 49297;
-    const m = 233280;
-    return (seed * a + c) % m / m;
   },
   getHint(trial, answer) {
     const answerUsed = [false,false,false,false,false];

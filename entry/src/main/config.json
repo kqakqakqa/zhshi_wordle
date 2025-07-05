@@ -40,7 +40,9 @@
         "pages": [
           "pages/index/index",
           "pages/init_words/init_words",
-          "pages/main/main"
+          "pages/view_trials/view_trials",
+          "pages/keyboard/keyboard",
+          "pages/goto/goto"
         ],
         "name": "default"
       }

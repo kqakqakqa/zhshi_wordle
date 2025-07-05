@@ -4,8 +4,10 @@
   margin: 2px;
   border-radius: 3px;
   border-width: 3px;
-  align-items: center;
-  justify-content: center;
+/*  align-items: center;*/
+/*  justify-content: center;*/
+  text-align: center;
+  padding-top: 8px;
 }
 
 .keyboard-key{
@@ -16,8 +18,10 @@
   margin-right: 3px;
   border-radius: 8px;
 /*  background-color: #444;*/
-  align-items: center;
-  justify-content: center;
+/*  align-items: center;*/
+/*  justify-content: center;*/
+  text-align: center;
+  padding-top: 10px;
 }
 
 .keyboard-row{
