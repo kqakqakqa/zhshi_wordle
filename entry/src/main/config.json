@@ -3,8 +3,8 @@
     "bundleName": "com.github.kqakqakqa.zhshi.wordle",
     "vendor": "kqakqakqa",
     "version": {
-      "code": 1000000,
-      "name": "1.0.0"
+      "code": 0,
+      "name": "0.1.2.20250706"
     }
   },
   "deviceConfig": {},
@@ -40,9 +40,10 @@
         "pages": [
           "pages/index/index",
           "pages/init_words/init_words",
-          "pages/view_trials/view_trials",
-          "pages/keyboard/keyboard",
-          "pages/goto/goto"
+          "pages/menu/menu",
+          "pages/game_keyboard/game_keyboard",
+          "pages/game_no_keyboard/game_no_keyboard",
+          "pages/about/about"
         ],
         "name": "default"
       }

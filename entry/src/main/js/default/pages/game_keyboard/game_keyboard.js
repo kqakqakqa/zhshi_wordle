@@ -3,38 +3,54 @@ import router from '@system.router';
 
 export default {
   data: {
-    trials:[[{char:""},{char:""},{char:""},{char:""},{char:""}]],
+    trials: undefined,
     keys: [
       ['Q','W','E','R','T','Y','U','I','O','P'],
       ['A','S','D','F','G','H','J','K','L'],
       ['Z','X','C','V','B','N','M']
     ],
     answer: undefined,
-    keyboardHint: {},
+    keyboardHint: undefined,
     animationDuration: 0,
     animationInterval: null,
     animationFactor: 0,
-    message: "",
-    finished: false,
-    // showKeyboard: false,
-    isEnterPress: undefined,
-  },
-  onInit() {
-    if(this.isEnterPress) this.onEnterPress();
+    message: undefined,
+    finished: undefined,
+    // refresh: true,
+    isEnterPress: false,
   },
   onShowKeyboardPress(){
-    // this.showKeyboard = !this.showKeyboard;
     router.replace({
-      uri: "/pages/goto/goto",
+      uri: "/pages/index/index",
       params:{
-        goto: "/pages/keyboard/keyboard",
+        goto: "/pages/game_no_keyboard/game_no_keyboard",
         trials: this.trials,
         answer: this.answer,
         keyboardHint: this.keyboardHint,
         message: this.message,
         finished: this.finished,
+        isEnterPress: this.isEnterPress,
       }
     });
+  },
+  onKeyPress(v){
+    if(this.finished) return;
+    const trialCount = this.trials.length - 1;
+    this.trials[trialCount] = this.trials[trialCount]
+      .filter(function(v){return v.char !== "";})
+      .concat([{char:v.toString()},{char:""},{char:""},{char:""},{char:""}])
+      .slice(0,5);
+    this.refreshTrials();
+  },
+  onDelPress(){
+    if(this.finished) return;
+    const trialCount = this.trials.length - 1;
+    this.trials[trialCount] = this.trials[trialCount]
+      .filter(function(v){return v.char !== "";})
+      .slice(0,-1)
+      .concat([{char:""},{char:""},{char:""},{char:""},{char:""}])
+      .slice(0,5);
+    this.refreshTrials();
   },
   checkValid(trial, callbackfn){
     if(trial[4].char === "") callbackfn(false);
@@ -54,9 +70,6 @@ export default {
       }
     });
   },
-  isCorrect(trial){
-    return trial[0].char + trial[1].char + trial[2].char + trial[3].char + trial[4].char === this.answer.join("");
-  },
   onEnterPress(){
     if(this.finished) return this.setAnimation();
     const trialCount = this.trials.length - 1
@@ -64,29 +77,19 @@ export default {
     this.checkValid(trial,isValid=>{
       if(!isValid) {
         this.message = "Invalid word"
-        this.setAnimation();
-        return;
-      }
-      this.trials[trialCount] = this.getHint(trial,this.answer);
-      this.keyboardHint = this.getKeyboardHint(this.trials);
-      if(this.isCorrect(trial)){
-        this.message = "Splendid!";
-        this.finished = true;
         this.refreshTrials();
         this.setAnimation();
         return;
       }
-      if(trialCount>4){
-        this.finished = true;
-        this.message = this.answer.join("");
-        return;
-      }
-      this.trials.push([{char:""},{char:""},{char:""},{char:""},{char:""}]);
+      this.isEnterPress = true;
+      this.onShowKeyboardPress();
     });
   },
   refreshTrials(){
+    // this.refresh = false;
     const trials = this.trials;
     this.trials = trials;
+    // this.refresh = true;
   },
   flat1(arr) {
     var result = [];
@@ -101,48 +104,6 @@ export default {
       }
     }
     return result;
-  },
-  getHint(trial, answer) {
-    const answerUsed = [false,false,false,false,false];
-
-    for (let i = 0; i < 5; i++) {
-      if (trial[i].char === answer[i]) {
-        trial[i].hint = "green";
-        answerUsed[i] = true;
-      }
-    }
-
-    for (let i = 0; i < 5; i++) {
-      if (trial[i].hint === undefined) trial[i].hint = "gray";
-      else if (trial[i].hint !== "gray") continue;
-
-      for (let j = 0; j < 5; j++) {
-        if (!answerUsed[j] && trial[i].char === answer[j]) {
-          trial[i].hint = "yellow";
-          answerUsed[j] = true;
-          break;
-        }
-      }
-    }
-
-    return trial;
-  },
-  getKeyboardHint(trials) {
-    const priority = { gray: 0, yellow: 1, green: 2 };
-    const keyboardHint = {};
-
-    const trialsFlat = this.flat1(trials);
-
-    for (let i = 0; i < trialsFlat.length; i++) {
-      const char = trialsFlat[i].char;
-      const color = trialsFlat[i].hint;
-
-      if (!keyboardHint[char] || priority[color] > priority[keyboardHint[char]]) {
-        keyboardHint[char] = color;
-      }
-    }
-
-    return keyboardHint;
   },
   setAnimation() {
     this.animationDuration = this.animationDuration % 15 + 15;

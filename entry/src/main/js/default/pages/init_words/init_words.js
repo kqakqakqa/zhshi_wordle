@@ -1,5 +1,7 @@
 import file from '@system.file';
 import router from '@system.router';
+import app from '@system.app';
+import brightness from '@system.brightness';
 
 export default {
   data: {
@@ -9,9 +11,9 @@ export default {
     errStr: null,
     strLen: 0,
     interval: null,
-    wordsVersion: undefined,
   },
   onInit() {
+    brightness.setKeepScreenOn({keepScreenOn: true});
     this.strLen = this.wordsStr.length;
     file.rmdir({
       uri: "internal://app/words",
@@ -41,13 +43,13 @@ export default {
         success: () => {
           file.writeText({
             uri: `internal://app/words/version`,
-            text: this.wordsVersion,
+            text: app.getInfo().versionName,
             fail: data => {
               clearInterval(this.interval);
               this.errStr = data;
             },
             success: () => {
-              router.replace({uri: "/pages/index/index"});
+              return router.replace({uri: "/pages/index/index"});
             }
           });
         }

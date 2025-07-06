@@ -1,0 +1,6 @@
+<div style="width: 454px; height: 454px; align-items: center; justify-content: center; flex-direction: column;">
+  <image src="/../../entry/resources/base/media/icon.png" style="width: 114px; height: 114px;"></image>
+  <text on:click="onDailyGameClick" style="width: 320px; height: 58px; margin-top: 12px; border-radius: 58px; background-color: #444; text-align: center; padding-top: 10px;">每日挑战</text>
+  <text on:click="onRndGameClick" style="width: 320px; height: 58px; margin-top: 12px; border-radius: 58px; background-color: #444; text-align: center; padding-top: 10px;">随机挑战</text>
+  <text on:click="onAboutClick" style="width: 320px; height: 58px; margin-top: 12px; border-radius: 58px; background-color: #444; text-align: center; padding-top: 10px;">关于</text>
+</div>
